@@ -119,7 +119,7 @@ char *cd_cmd(const char* cmd, ...)
 	else if (strcmp(dir, "-") == 0)
 	{
 	/* If the argument is "-", change to the previous directory (stored in $OLDPWD) */
-		old_dir = getenv("OLDPWD");
+		old_dir = _getenv("OLDPWD");
 		if (old_dir == NULL)
 		{
 			perror("cd");

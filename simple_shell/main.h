@@ -15,6 +15,15 @@
 #define MAX_ARG_LEN 100
 #define MAX_CMD_LEN (MAX_ARGS * MAX_ARG_LEN)
 #define BUFFER_SIZE 1024
+#define MAX_ALIASES 100
+#define MAX_ALIAS_LENGTH 100
+
+typedef struct {
+	char *name;
+	char *value;
+} Alias;
+
+Alias aliases[MAX_ALIASES];
 
 extern char **environ;
 
@@ -43,5 +52,23 @@ char *_strcat(char *dest, char *src);
 char *_strcpy(char *dest, char *src);
 
 char* get_cmd(char* cmd, ...);
+
+void print_aliases();
+
+void print_alias(const char *alias_name);
+
+void define_alias(const char *alias_name, const char *alias_value);
+
+char *alias_cmd(const char *cmd, ...);
+
+char *exit_cmd(const char* cmd, ...);
+
+char *env_cmd(const char* cmd);
+
+char *setenv_cmd(const char *cmd, ...);
+
+char *unsetenv_cmd(const char *cmd, ...);
+
+char *cd_cmd(const char* cmd, ...);
 
 #endif /* MAIN_H */

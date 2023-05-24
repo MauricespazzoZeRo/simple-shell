@@ -81,3 +81,58 @@ int _strcmp(char *s1, char *s2)
 
         return (s1[i] - s2[i]);
 }
+
+
+int _putenv(const char *string)
+{
+	const char *key = string;
+	const char *value = _strchr(string, '=');
+	int key_length;
+	int i, j;
+	int num_vars;
+	char **new_environ;
+	
+	
+
+	if (value == NULL)
+	{
+		return (-1);
+	}
+	value++;
+
+	key_length = value - key - 1;
+	for (i = 0, environ[i] != NULL; i++)
+	{
+		if (_strncmp(environ[i], key, key_length) == 0 && environ[i][key_length] == '=')
+		{
+			environ[i] = string;
+			return (0);
+		}
+	}
+
+	num_vars = 0;
+	while (environ[num_vars] != NULL)
+	{
+		num_vars++;
+	}
+
+	new_environ = (char **)malloc((num_vars + 2) * 8);
+
+	if (new_environ == NULL)
+	{
+		perror("_putenv");
+		return (-1);
+	}
+
+	for (j = 0, j < num_vars; j++)
+	{
+		new_environ[j] = (char *)environ[i];
+	}
+
+	new_environ[num_vars] = (char *)string;
+	new_environ[num_vars + 1] = NULL;
+
+	environ = new_environ;
+
+	return (0);
+}
