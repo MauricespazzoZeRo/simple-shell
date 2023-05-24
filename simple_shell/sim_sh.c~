@@ -1,0 +1,131 @@
+#include "main.h"
+
+extern char **environ;
+
+/**
+ * main - A simple shell that displays a prompt and waits for the user to
+ *		  type a command.
+ *
+ * Return: Always 0.
+ */
+int main(void)
+{
+	char *line = NULL;
+	char *args[MAX_ARGS];
+	char *token;
+	char *path;
+	char *dir;
+	pid_t child_pid;
+	int status;
+	size_t command_path_len;
+	int c;
+	char *command_path, command_len, dir_len;
+	char* result;
+
+	/* Retrieve the PATH variable from environ */
+	path = _getenv("PATH");
+	if (path == NULL)
+	{
+		perror("Failed to retrieve PATH");
+		exit(EXIT_FAILURE);
+	}
+
+	while (1)
+	{
+		write(1, "simple_shell$ ", 14);
+		fflush(stdout);
+
+		line = _getline();
+
+		if (line == NULL) /* Encounters EOF */
+		{
+			break;
+		}
+		else if (line[0] == '\0') /* Encounters empty line */
+		{
+			free(line);
+			continue;
+		}
+		else
+		{
+			line[_strlen(line) - 1] = '\0'; /* remove the newline character */
+
+			/* Tokenize the line to get individual args */
+			token = strtok(line, " ");
+			c = 0;
+			while (token != NULL && c < MAX_ARGS - 1)
+			{
+				args[c] = token;
+				token = strtok(NULL, " ");
+				c++;
+			}
+			args[c] = NULL; /* Set the last element to NULL to terminate the args list */
+			/* Check for built-in commands */
+            result = get_cmd(args[0]);
+            if (result != NULL)
+            {
+				write(1, result, _strlen(result));
+				write(1, "\n", 1);
+                free(line);
+                continue;
+            }
+
+			/* Iterate over each dir in the PATH */
+			dir = strtok(path, ":");
+			while (dir != NULL)
+			{
+				/* Construct the full path of the command */
+				dir_len = _strlen(dir);
+				command_len = _strlen(args[0]);
+				command_path_len = dir_len + command_len + 2;
+				command_path = malloc(command_path_len * 1);
+				if (command_path == NULL)
+                {
+                    perror("malloc");
+                    exit(EXIT_FAILURE);
+                }
+				_strcpy(command_path, dir);
+				_strcat(command_path, "/");
+				_strcat(command_path, args[0]);
+
+				if (access(command_path, X_OK) == 0)
+				{
+					child_pid = fork();
+					if (child_pid == -1)
+					{
+						perror("fork");
+						exit(EXIT_FAILURE);
+					}
+					else if (child_pid == 0) /* Child process */
+					{
+						execve(command_path, args, environ);
+						perror("execve");
+						exit(EXIT_FAILURE);
+					}
+					else /* Parent process */
+					{
+						wait(&status); /* Wait for child process to terminate */
+					}
+
+					free(command_path);
+					break; /* Stop searching in PATH if command is found and executed */
+				}
+				free(command_path);
+				dir = strtok(NULL, "/");
+			}
+
+			if (dir == NULL)
+			{
+				write(1, "Command not found: ", 20);
+				write(1, args[0], _strlen(args[0]));
+				write(1, "\n", 1);
+
+				get_cmd(args[0]);
+			}
+
+			free(line);
+		}
+	}
+
+	return (0);
+}

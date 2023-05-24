@@ -1,0 +1,30 @@
+#include "main.h"
+
+char* get_cmd(char* cmd, ...)
+{
+	char** env;
+	int stat;
+	va_list(stts);
+
+	va_start(stts, cmd);
+
+	if (_strcmp(cmd, "exit") == 0)
+	{
+		stat = va_arg(stts, int);
+		exit(stat);
+		va_end(stts);
+	}
+	else if (_strcmp(cmd, "env") == 0)
+	{
+		env = environ;
+
+		while (*env != NULL)
+		{
+			write(1, *env, _strlen(*env));
+			write(1, "\n", 1);
+			env++;
+		}
+	}
+
+	return (NULL);
+}
