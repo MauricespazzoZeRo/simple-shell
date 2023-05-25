@@ -79,7 +79,7 @@ char* _getline(void)
 
 
 /**
- * _strlen - counts chard in a string.
+ * _strlen - counts chars in a string.
  *
  * @s: unsigned char used
  *

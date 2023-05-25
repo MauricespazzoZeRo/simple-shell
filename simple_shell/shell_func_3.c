@@ -26,3 +26,46 @@ char *_strncpy(char *dest, char *src, int n)
 
     return (dest);
 }
+
+/**
+ * _Strlen - counts const chars in a string.
+ *
+ * @s: unsigned char used
+ *
+ * Return: Length of string
+ */
+
+int _Strlen(const char *s)
+{
+	int length = 0;
+
+	while (*s != '\0')
+	{
+		length++;
+		s++;
+	}
+	return (length);
+}
+
+/**
+ * _Strcpy - Copies the string pointed to by src, including the terminating
+ * null byte (\0), to the buffer pointed to by dest.
+ *
+ * @dest: Buffer to copy string to.
+ * @src: String to copy.
+ *
+ * Return: Pointer to dest.
+ */
+char *_Strcpy(char *dest, const char *src)
+{
+    int i;
+
+    for (i = 0; src[i] != '\0'; i++)
+    {
+        dest[i] = src[i];
+    }
+
+    dest[i] = '\0';
+
+    return (dest);
+}

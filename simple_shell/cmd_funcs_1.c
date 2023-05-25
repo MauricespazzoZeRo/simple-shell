@@ -1,5 +1,8 @@
 #include "main.h"
 
+struct Alias aliases[MAX_ALIASES];
+
+
 void print_aliases()
 {
 	int i;
@@ -8,10 +11,10 @@ void print_aliases()
 	{
 		if (aliases[i].name != NULL && aliases[i].value != NULL)
 		{
-			write(STDOUT_FILENO, aliases[i].name, strlen(aliases[i].name));
+			write(STDOUT_FILENO, aliases[i].name, _strlen(aliases[i].name));
 			write(STDOUT_FILENO, "=", 1);
 			write(STDOUT_FILENO, "'", 1);
-			write(STDOUT_FILENO, aliases[i].value, strlen(aliases[i].value));
+			write(STDOUT_FILENO, aliases[i].value, _strlen(aliases[i].value));
 			write(STDOUT_FILENO, "'\n", 2);
 		}
 	}

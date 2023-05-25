@@ -18,15 +18,12 @@
 #define MAX_ALIASES 100
 #define MAX_ALIAS_LENGTH 100
 
-typedef struct {
+struct Alias {
 	char *name;
 	char *value;
-} Alias;
+};
 
-Alias aliases[MAX_ALIASES];
-
-typedef char* (*CmdFunc)(const char* cmd, ...);
-
+/* extern struct Alias aliases[MAX_ALIASES]; */
 
 extern char **environ;
 
@@ -34,6 +31,8 @@ extern char **environ;
 char* _getline(void);
 
 int _strlen(char *s);
+
+int _Strlen(const char *s);
 
 int _strncmp(const char *s1, const char *s2, size_t n);
 
@@ -47,9 +46,9 @@ char *_strcat(char *dest, char *src);
 
 char *_strcpy(char *dest, char *src);
 
-char *_strncpy(char *dest, char *src, int n);
+char *_Strcpy(char *dest, const char *src);
 
-CmdFunc get_cmd(const char *cmd);
+char *_strncpy(char *dest, char *src, int n);
 
 void print_aliases();
 
@@ -63,11 +62,11 @@ void exit_cmd(const char* cmd, ...);
 
 char *env_cmd(const char* cmd);
 
-char *setenv_cmd(const char *cmd, ...);
+int setenv_cmd(const char *cmd, ...);
 
-char *unsetenv_cmd(const char *cmd, ...);
+int unsetenv_cmd(const char *cmd, ...);
 
-char *cd_cmd(const char* cmd, ...);
+int cd_cmd(const char* cmd, ...);
 
 char *_strdup(char *str);
 

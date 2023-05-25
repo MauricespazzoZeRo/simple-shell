@@ -43,10 +43,10 @@ char *env_cmd(const char *cmd)
     /* Iterate over each environment variable and capture them in a string */
     char **envi = environ;
     size_t total_len = 0;
-    size_t cmd_len = _strlen(cmd);
+    size_t cmd_len = _Strlen(cmd);
     char *output;
-    char *tmp;
-	sixe_t len;
+	char *tmp;
+	size_t len;
 
     if (_strcmp(cmd, "env") == 0)
     {
@@ -69,7 +69,7 @@ char *env_cmd(const char *cmd)
         tmp = output;
 
         /* Copy the command to the beginning of the output string */
-        _strcpy(tmp, cmd);
+        _Strcpy(tmp, cmd);
         tmp += cmd_len;
 
         envi = environ;
@@ -103,7 +103,7 @@ char *env_cmd(const char *cmd)
  * Return: NULL on success, or an error message on failure.
  */
 
-char *setenv_cmd(const char *cmd, ...)
+int setenv_cmd(const char *cmd, ...)
 {
 	va_list args;
 	char *name, *value;
@@ -129,7 +129,8 @@ char *setenv_cmd(const char *cmd, ...)
 		/* Check if both name and value are provided */
 		if (name == NULL || value == NULL)
 		{
-			return ("Usage: setenv VAR VALUE");
+			perror("Usage: setenv VAR VALUE");
+			return(-1);
 		}
 
 		/* Concatenate name, "=", and value into a single string */
@@ -139,7 +140,8 @@ char *setenv_cmd(const char *cmd, ...)
 		env_str = malloc(str_len);
 		if (env_str == NULL)
 		{
-			return ("Failed to allocate memory");
+			perror("Failed to allocate memory");
+			return(-1);
 		}
 
 		_strcpy(env_str, name);
@@ -155,7 +157,7 @@ char *setenv_cmd(const char *cmd, ...)
 				/* Found the variable, replace it with the new value */
 				free(*env);
 				*env = env_str;
-				return (NULL);	/* Return NULL on success */
+				return (0);	/* Return NULL on success */
 			}
 			env++;
 		}
@@ -169,7 +171,7 @@ char *setenv_cmd(const char *cmd, ...)
 		if (new_env == NULL)
 		{
 			free(env_str);
-			return ("Failed to allocate memory");
+			write(1, "Failed to allocate memory", 26);
 		}
 
 		/* Copy the existing variables to the new environ array */
@@ -199,7 +201,7 @@ char *setenv_cmd(const char *cmd, ...)
  *
  * Return: NULL on success, or an error message on failure.
  */
-char *unsetenv_cmd(const char *cmd, ...)
+int unsetenv_cmd(const char *cmd, ...)
 {
 	va_list args;
 	char *name;
@@ -219,7 +221,8 @@ char *unsetenv_cmd(const char *cmd, ...)
 		/* Check if name is provided */
 		if (name == NULL)
 		{
-			return ("Usage: unsetenv VAR");
+			perror("Usage: unsetenv VAR");
+			return (-1);
 		}
 
 		/* Search for the variable in the environ array */
@@ -242,19 +245,19 @@ char *unsetenv_cmd(const char *cmd, ...)
 				}
 				*dst = NULL;
 
-				return (NULL);	/* Return NULL on success */
+				return (0);	/* Return NULL on success */
 			}
 			env++;
 		}
 	}
 
 	/* Variable not found */
-	return ("Variable not found");
+	return (-1);
 }
 
 
 
-char *cd_cmd(const char* cmd, ...)
+int cd_cmd(const char* cmd, ...)
 {
 	va_list args;
     char *dir;
@@ -264,7 +267,7 @@ char *cd_cmd(const char* cmd, ...)
 	char current_dir[256];
 	char pwd_value[256];
 	char *pwd_var;
-	char *pwd_entry;
+	char *pwd_entry = "";
 
 	if (_strcmp(cmd, "cd") == 0)
 	{
@@ -281,7 +284,7 @@ char *cd_cmd(const char* cmd, ...)
 			if (home_dir == NULL)
 			{
 				perror("cd");
-				return (NULL);
+				return (-1);
 			}
 			_strncpy(target_dir, home_dir, 256);
 		}
@@ -292,7 +295,7 @@ char *cd_cmd(const char* cmd, ...)
 			if (old_dir == NULL)
 			{
 				perror("cd");
-				return (NULL);
+				return (-1);
 			}
 			_strncpy(target_dir, old_dir, 256);
 		}
@@ -306,19 +309,13 @@ char *cd_cmd(const char* cmd, ...)
 		if (getcwd(current_dir, 256) == NULL)
 		{
 			perror("cd");
-			return (NULL);
+			return (-1);
 		}
-		if (setenv_cmd("OLDPWD", current_dir) != NULL)
-		{
-			perror("cd");
-			return (NULL);
-		}
-
 		/* Change the current working directory */
 		if (chdir(target_dir) != 0)
 		{
 			perror("cd");
-			return (NULL);
+			return (-1);
 		}
 
 		/* Update the environment variable PWD */
@@ -326,19 +323,27 @@ char *cd_cmd(const char* cmd, ...)
 		if (getcwd(pwd_value, 256) == NULL)
 		{
 			perror("cd");
-			return (NULL);
+			return (-1);
 		}
+
+		pwd_entry = malloc(_strlen(pwd_var) + 1);
+		if (pwd_entry == NULL)
+		{
+			perror("pwd_entry");
+			return (-1);
+		}
+
 		_strcpy(pwd_entry, pwd_var);
 		_strcat(pwd_entry, pwd_value);
-		if (setenv_cmd("PWD", pwd_value) != NULL)
+		if (setenv_cmd("PWD", pwd_value) != 0)
 		{
 			perror("cd");
 			free(pwd_entry);
-			return (NULL);
+			return (-1);
 		}
 	}
 
 	free(pwd_entry);
 
-	return (NULL);	/* Return NULL as no command output is expected */
+	return (0);	/* Return NULL as no command output is expected */
 }

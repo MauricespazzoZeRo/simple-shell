@@ -15,12 +15,11 @@ int main(void)
 	char *token;
 	char *path;
 	char *dir;
-	pid_t child_pid;
-	int status;
+	/* pid_t child_pid; */
+	/* int status; */
 	size_t command_path_len;
 	int c;
 	char *command_path, command_len, dir_len;
-	char* result;
 
 	/* Retrieve the PATH variable from environ */
 	path = _getenv("PATH");
@@ -32,23 +31,21 @@ int main(void)
 
 	while (1)
 	{
-		write(1, "simple_shell$ ", 14);
-		fflush(stdout);
 
 		line = _getline();
 
-		if (line == NULL) /* Encounters EOF */
+		if (line == NULL)
 		{
 			break;
 		}
-		else if (line[0] == '\0') /* Encounters empty line */
+		else if (line[0] == '\0')
 		{
 			free(line);
 			continue;
 		}
 		else
 		{
-			line[_strlen(line) - 1] = '\0'; /* remove the newline character */
+			line[_strlen(line) - 1] = '\0';
 
 			/* Tokenize the line to get individual args */
 			token = strtok(line, " ");
@@ -59,66 +56,53 @@ int main(void)
 				token = strtok(NULL, " ");
 				c++;
 			}
-			args[c] = NULL; /* Set the last element to NULL to terminate the args list */
+			args[c] = NULL;
+
 			/* Check for built-in commands */
-            result = get_cmd(args[0]);
-            if (result != NULL)
-            {
-				write(1, result, _strlen(result));
-				write(1, "\n", 1);
-                free(line);
-                continue;
-            }
-
-			/* Iterate over each dir in the PATH */
-			dir = strtok(path, ":");
-			while (dir != NULL)
+			if (_strcmp(args[0], "exit") == 0)
 			{
-				/* Construct the full path of the command */
-				dir_len = _strlen(dir);
-				command_len = _strlen(args[0]);
-				command_path_len = dir_len + command_len + 2;
-				command_path = malloc(command_path_len * 1);
-				if (command_path == NULL)
-                {
-                    perror("malloc");
-                    exit(EXIT_FAILURE);
-                }
-				_strcpy(command_path, dir);
-				_strcat(command_path, ":");
-				_strcat(command_path, args[0]);
-
-				if (access(command_path, X_OK) == 0)
-				{
-					child_pid = fork();
-					if (child_pid == -1)
-					{
-						perror("fork");
-						exit(EXIT_FAILURE);
-					}
-					else if (child_pid == 0) /* Child process */
-					{
-						execve(command_path, args, environ);
-						perror("execve");
-						exit(EXIT_FAILURE);
-					}
-					else /* Parent process */
-					{
-						wait(&status); /* Wait for child process to terminate */
-					}
-
-					free(command_path);
-					break; /* Stop searching in PATH if command is found and executed */
-				}
-				free(command_path);
-				dir = strtok(NULL, "/");
+				exit_cmd("exit");
 			}
-
-			if (dir == NULL)
+			else if (_strcmp(args[0], "cd") == 0)
 			{
-				write(1, "Command not found: ", 20);
-				write(1, args[0], _strlen(args[0]));
-				write(1, "\n", 1);
+				cd_cmd("cd");
+			}
+			else if (_strcmp(args[0], "env") == 0)
+			{
+				env_cmd("env");
+			}
+			else
+			{
+				/* Iterate over each dir in the PATH */
+				dir = strtok(path, ":");
+				while (dir != NULL)
+				{
+					/* Construct the full path of the command */
+					dir_len = _strlen(dir);
+					command_len = _strlen(args[0]);
+					command_path_len = dir_len + command_len + 2;
+					command_path = malloc(command_path_len);
+					if (command_path == NULL)
+					{
+						perror("malloc");
+						exit(EXIT_FAILURE);
+					}
+					_strcpy(command_path, dir);
+					_strcat(command_path, "/");
+					_strcat(command_path, args[0]);
+
+					dir = strtok(NULL, ":");
+				}
+
+				if (dir == NULL)
+				{
+					write(1, "Command not found: ", 20);
+					write(1, args[0], _strlen(args[0]));
+					write(1, "\n", 1);
+				}
+
+				free(line);
+				continue; /* Move the continue statement here */
 			}
 
 			free(line);
