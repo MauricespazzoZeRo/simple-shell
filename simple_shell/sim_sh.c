@@ -10,9 +10,7 @@ extern char **environ;
  */
 int main(void)
 {
-	environ = my_environ;
-	
-	char *line = NULL;
+	char *line;
 	char *args[MAX_ARGS];
 	char *token;
 	char *path;
@@ -90,7 +88,7 @@ int main(void)
 				_strcat(command_path, ":");
 				_strcat(command_path, args[0]);
 
-				if (access(command_path, X_OK) == 0) 
+				if (access(command_path, X_OK) == 0)
 				{
 					child_pid = fork();
 					if (child_pid == -1)
@@ -121,8 +119,6 @@ int main(void)
 				write(1, "Command not found: ", 20);
 				write(1, args[0], _strlen(args[0]));
 				write(1, "\n", 1);
-
-				get_cmd(args[0]);
 			}
 
 			free(line);

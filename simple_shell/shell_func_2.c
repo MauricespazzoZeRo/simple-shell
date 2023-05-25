@@ -65,34 +65,74 @@ int _strncmp(const char *s1, const char *s2, size_t n)
  * @s2: the second string to be compared
  *
  * Return: 0 if the strings are equal, a negative number if s1 is less than s2,
- *         or a positive number if s1 is greater than s2
+ *		   or a positive number if s1 is greater than s2
  */
-int _strcmp(char *s1, char *s2)
+int _strcmp(const char *s1, const char *s2)
 {
-        int i;
+		int i;
 
-        for (i = 0; s1[i] != '\0' && s2[i] != '\0'; i++)
-        {
-                if (s1[i] != s2[i])
-                {
-                        return (s1[i] - s2[i]);
-                }
-        }
+		for (i = 0; s1[i] != '\0' && s2[i] != '\0'; i++)
+		{
+			if (s1[i] != s2[i])
+			{
+				return (s1[i] - s2[i]);
+			}
+		}
 
-        return (s1[i] - s2[i]);
+		return (s1[i] - s2[i]);
+}
+
+/**
+ * _strdup - Returns a pointer to a newly allocated space in memory,
+ * which contains a copy of the string given as a parameter.
+ *
+ * @str: the string to duplicate
+ *
+ * Return: a pointer to the newly allocated string, or NULL if str is NULL
+ * or if memory allocation fails.
+ */
+
+char *_strdup(char *str)
+{
+	char *new_str;
+	size_t i, len;
+
+	if (str == NULL)
+	{
+		return (NULL);
+	}
+
+	len = 0;
+	while (str[len] != '\0')
+	{
+		len++;
+	}
+
+	new_str = malloc(len + 1);
+	if (new_str == NULL)
+	{
+		return (NULL);
+	}
+
+	for (i = 0; i < len; i++)
+	{
+		new_str[i] = str[i];
+	}
+
+	new_str[len] = '\0';
+
+	return (new_str);
 }
 
 
-int _putenv(const char *string)
+int _putenv(char *string)
 {
-	const char *key = string;
-	const char *value = _strchr(string, '=');
+	char *key = string;
+	char *value = _strchr(string, '=');
 	int key_length;
 	int i, j;
 	int num_vars;
 	char **new_environ;
-	
-	
 
 	if (value == NULL)
 	{
@@ -101,7 +141,7 @@ int _putenv(const char *string)
 	value++;
 
 	key_length = value - key - 1;
-	for (i = 0, environ[i] != NULL; i++)
+	for (i = 0; environ[i] != NULL; i++)
 	{
 		if (_strncmp(environ[i], key, key_length) == 0 && environ[i][key_length] == '=')
 		{
@@ -124,7 +164,7 @@ int _putenv(const char *string)
 		return (-1);
 	}
 
-	for (j = 0, j < num_vars; j++)
+	for (j = 0; j < num_vars; j++)
 	{
 		new_environ[j] = (char *)environ[i];
 	}

@@ -1,0 +1,74 @@
+#include "main.h"
+
+/**
+ * get_cmd - Get the function pointer for a command.
+ *
+ * @cmd: The command string.
+ *
+ * Return: The function pointer corresponding to the command, or NULL if the
+ *         command is unknown or unsupported.
+ */
+
+CmdFunc get_cmd(const char *cmd)
+{
+    if (cmd != NULL)
+    {
+        if (_strcmp(cmd, "exit") == 0)
+        {
+            return (exit_cmd);
+        }
+        else if (_strcmp(cmd, "cd") == 0)
+        {
+            return (cd_cmd);
+        }
+        else if (_strcmp(cmd, "env") == 0)
+        {
+            return (env_cmd);
+        }
+        else if (_strcmp(cmd, "setenv") == 0)
+        {
+            return (setenv_cmd);
+        }
+        else if (_strcmp(cmd, "unsetenv") == 0)
+        {
+            return (unsetenv_cmd);
+        }
+        else if (_strcmp(cmd, "alias") == 0)
+        {
+            return (alias_cmd);
+        }
+    }
+
+    return (NULL); /* Return NULL for unknown commands */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 	if (_strcmp(cmd, "path") == 0) */
+/* 	{ */
+/* 		path = _getenv("PATH"); */
+/* 		if (path == NULL) */
+/* 		{ */
+/* 			perror("Failed to retrieve PATH"); */
+/* 			exit(EXIT_FAILURE); */
+/* 		} */
+/* 	} */
+/* 	else if (_strcmp(cmd, "cd") == 0) */
+/* 	{ */
+/* 		cd = _getenv("CD") */
+/* 	} */
+
+
+/* } */

@@ -3,7 +3,7 @@
 void print_aliases()
 {
 	int i;
-	
+
 	for (i = 0; i < MAX_ALIASES; i++)
 	{
 		if (aliases[i].name != NULL && aliases[i].value != NULL)
@@ -17,10 +17,10 @@ void print_aliases()
 	}
 }
 
-void print_alias(const char *alias_name)
+void print_alias(char *alias_name)
 {
 	int i;
-	
+
 	for (i = 0; i < MAX_ALIASES; i++)
 	{
 		if (aliases[i].name != NULL && _strcmp(aliases[i].name, alias_name) == 0)
@@ -35,10 +35,10 @@ void print_alias(const char *alias_name)
 	}
 }
 
-void define_alias(const char *alias_name, const char *alias_value)
+void define_alias(char *alias_name, char *alias_value)
 {
 	int i, j;
-	
+
 	for (i = 0; i < MAX_ALIASES; i++)
 	{
 		if (aliases[i].name != NULL && _strcmp(aliases[i].name, alias_name) == 0)
@@ -53,12 +53,12 @@ void define_alias(const char *alias_name, const char *alias_value)
 	{
 		if (aliases[i].name == NULL)
 		{
-			aliases[i].name = strdup(alias_name);
-			aliases[i].value = strdup(alias_value);
+			aliases[i].name = _strdup(alias_name);
+			aliases[i].value = _strdup(alias_value);
 			return;
 		}
 	}
-	
+
 	write(STDOUT_FILENO, "Maximum number of aliases reached.\n", 35);
 }
 
@@ -67,7 +67,7 @@ char *alias_cmd(const char *cmd, ...)
 	va_list args;
 	char *alias_name;
 	char *next_arg;
-	
+
 	va_start(args, cmd);
 
 	if (_strcmp(cmd, "alias") == 0)
@@ -93,6 +93,6 @@ char *alias_cmd(const char *cmd, ...)
 			next_arg = va_arg(args, char *);
 		}
 	}
-	
+
 	return (NULL);
 }
