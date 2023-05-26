@@ -1,0 +1,323 @@
+#include "main.h"
+
+char *exit_cmd(const char* cmd, ...)
+{
+	va_list stts;
+	int status;
+	char* exit;
+	char* result = NULL;
+
+	va_start(stts, cmd);
+
+	if (cmd != NULL)
+	{
+		status = va_arg(stts, int);
+		va_end(stts);
+
+		exit(status);
+	}
+}
+
+char *env_cmd(const char* cmd)
+{
+	extern char **environ;	/* Access the global environ variable */
+
+	/* Iterate over each environment variable and write them to stdout */
+	char **env = environ;
+	size_t len;
+
+	while (*env != NULL)
+	{
+		len = _strlen(*env);
+		write(STDOUT_FILENO, *env, len);
+		write(STDOUT_FILENO, "\n", 1);
+		env++;
+	}
+
+	return (NULL);
+}
+
+/**
+ * setenv_cmd - Set or update an environment variable.
+ *
+ * @cmd: The command string containing the variable name and value.
+ *
+ * Return: NULL on success, or an error message on failure.
+ */
+
+char *setenv_cmd(const char *cmd, ...)
+{
+    va_list args;
+    char *name, *value, *errmsg;
+    int ret;
+	size_t var_len;
+    size_t value_len;
+    size_t str_len;  /* +1 for '=', +1 for null terminator */
+    char *env_str;
+	char **env;
+	xuxuxu#include "main.h"
+
+/**
+ * setenv_cmd - Set or update an environment variable.
+ *
+ * @cmd: The command string containing the variable name and value.
+ *
+ * Return: NULL on success, or an error message on failure.
+ */
+char *setenv_cmd(const char *cmd, ...)
+{
+    va_list args;
+    char *name, *value, *errmsg;
+    int ret;
+
+    va_start(args, cmd);
+
+    /* Parse the command string to extract the variable name and value */
+    name = va_arg(args, char *);
+    value = va_arg(args, char *);
+
+    va_end(args);
+
+    /* Check if both name and value are provided */
+    if (name == NULL || value == NULL)
+        return "Usage: setenv VAR VALUE";
+
+    /* Concatenate name, "=", and value into a single string */
+    size_t var_len = strlen(name);
+    size_t value_len = strlen(value);
+    size_t str_len = var_len + 1 + value_len + 1;  // +1 for '=', +1 for null terminator
+    char *env_str = malloc(str_len);
+    if (env_str == NULL)
+        return "Failed to allocate memory";
+
+    strcpy(env_str, name);
+    env_str[var_len] = '=';
+    strcpy(env_str + var_len + 1, value);
+
+    /* Search for the existing variable in the environ array */
+    char **env = environ;
+    while (*env != NULL)
+    {
+        if (strncmp(*env, name, var_len) == 0 && (*env)[var_len] == '=')
+        {
+            /* Found the variable, replace it with the new value */
+            free(*env);
+            *env = env_str;
+            return NULL;  /* Return NULL on success */
+        }
+        env++;
+    }
+
+    /* Variable not found, calculate the size of the new environ array */
+    size_t env_count = env - environ;  // Get the number of existing variables
+    size_t new_env_count = env_count + 2;  // +2 for the new variable and NULL terminator
+
+    /* Allocate memory for the new environ array */
+    char **new_env = malloc(sizeof(char *) * new_env_count);
+    if (new_env == NULL)
+    {
+        free(env_str);
+        return "Failed to allocate memory";
+    }
+
+    /* Copy the existing variables to the new environ array */
+    for (size_t i = 0; i < env_count; i++)
+    {
+        new_env[i] = environ[i];
+    }
+
+    /* Add the new variable and NULL terminator to the new environ array */
+    new_env[env_count] = env_str;
+    new_env[new_env_count - 1] = NULL;
+
+    /* Replace the environ array with the new one */
+    free(environ);
+    environ = new_env;
+
+    return NULL;  /* Return NULL on success */
+}
+
+
+    va_start(args, cmd);
+
+    /* Parse the command string to extract the variable name and value */
+    name = va_arg(args, char *);
+    value = va_arg(args, char *);
+
+    va_end(args);
+
+    /* Check if both name and value are provided */
+    if (name == NULL || value == NULL)
+	{
+        return ("Usage: setenv VAR VALUE");
+	}
+
+    /* Concatenate name, "=", and value into a single string */
+    var_len = _strlen(name);
+    value_len = _strlen(value);
+    str_len = var_len + 1 + value_len + 1;  // +1 for '=', +1 for null terminator
+    env_str = malloc(str_len);
+
+    if (env_str == NULL)
+	{
+        return ("Failed to allocate memory");
+	}
+
+    _strcpy(env_str, name);
+    env_str[var_len] = '=';
+    _strcpy(env_str + var_len + 1, value);
+
+    /* Search for the existing variable in the environ array */
+    env = environ;
+    while (*env != NULL)
+    {
+        if (strncmp(*env, name, var_len) == 0 && (*env)[var_len] == '=')
+        {
+            /* Found the variable, replace it with the new value */
+            free(*env);
+            *env = env_str;
+            return (NULL);  /* Return NULL on success */
+        }
+        env++;
+    }
+
+    /* Variable not found, calculate the size of the new environ array */
+    env_count = env - environ;  /* Get the number of existing variables */
+    new_env_count = env_count + 2;  /* +2 for the new variable and NULL terminator */
+
+    /* Allocate memory for the new environ array */
+    char **new_env = malloc(sizeof(char *) * new_env_count);
+    if (new_env == NULL)
+    {
+        free(env_str);
+        return "Failed to allocate memory";
+    }
+
+    /* Copy the existing variables to the new environ array */
+    for (size_t i = 0; i < env_count; i++)
+    {
+        new_env[i] = environ[i];
+    }
+
+    /* Add the new variable and NULL terminator to the new environ array */
+    new_env[env_count] = env_str;
+    new_env[new_env_count - 1] = NULL;
+
+    /* Replace the environ array with the new one */
+    free(environ);
+    environ = new_env;
+
+    return NULL;  /* Return NULL on success */
+}
+
+
+
+char *unsetenv_cmd(const char *cmd, ...)
+{
+	va_list args;
+	const char *name;
+	int result;
+
+	/* Parse variable arguments */
+	va_start(args, cmd);
+	name = va_arg(args, const char *);
+	va_end(args);
+
+	// Call unsetenv to remove the environment variable */
+	result = unsetenv(name);
+	if (result != 0)
+	{
+		perror("unsetenv");
+		return (NULL);
+	}
+
+	return (NULL);	/* Return NULL as no command output is expected */
+}
+
+
+char *cd_cmd(const char* cmd, ...)
+{
+	va_list args;
+	const char *dir;
+	char target_dir[256];
+	const char *home_dir;
+	const char *old_dir;
+	char current_dir[256];
+	char pwd_value[256];
+	char *pwd_var;
+	char *pwd_entry;
+
+	/* Parse variable arguments */
+	va_start(args, cmd);
+	dir = va_arg(args, const char *);
+	va_end(args);
+
+	/* Determine the target directory */
+	if (dir == NULL || strcmp(dir, "") == 0)
+	{
+		/* If no argument or an empty argument is given, use $HOME */
+		home_dir = _getenv("HOME");
+		if (home_dir == NULL)
+		{
+			perror("cd");
+			return (NULL);
+		}
+		_strncpy(target_dir, home_dir, 256);
+	}
+	else if (_strcmp(dir, "-") == 0)
+	{
+	/* If the argument is "-", change to the previous directory (stored in $OLDPWD) */
+		old_dir = _getenv("OLDPWD");
+		if (old_dir == NULL)
+		{
+			perror("cd");
+			return (NULL);
+		}
+		_strncpy(target_dir, old_dir, 256);
+	}
+	else
+	{
+		/* Use the provided directory argument */
+		_strncpy(target_dir, dir, 256);
+	}
+
+	/* Save the current working directory to $OLDPWD */
+	if (getcwd(current_dir, 256) == NULL)
+	{
+		perror("cd");
+		return (NULL);
+	}
+	if (setenv_cmd("OLDPWD", current_dir, 1) == -1)
+	{
+		perror("cd");
+		return (NULL);
+	}
+
+	/* Change the current working directory */
+	if (chdir(target_dir) != 0)
+	{
+		perror("cd");
+		return (NULL);
+	}
+
+	/* Update the environment variable PWD */
+	pwd_var = "PWD=";
+	if (getcwd(pwd_value, 256) == NULL)
+	{
+		perror("cd");
+		return (NULL);
+	}
+	pwd_entry = malloc(_strlen(pwd_var) + _strlen(pwd_value) + 1);
+	_strcpy(pwd_entry, pwd_var);
+	_strcat(pwd_entry, pwd_value);
+	if (_putenv(pwd_entry) != 0)
+	{
+		perror("cd");
+		free(pwd_entry);
+		return (NULL);
+	}
+
+	free(pwd_entry);
+
+	return (NULL);	/* Return NULL as no command output is expected */
+}

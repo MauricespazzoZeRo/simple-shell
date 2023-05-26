@@ -31,6 +31,8 @@ int main(void)
 
 	while (1)
 	{
+		write(1, "simple_shell ", 13);
+		fflush(stdout);
 
 		line = _getline();
 
@@ -57,6 +59,12 @@ int main(void)
 				c++;
 			}
 			args[c] = NULL;
+
+			/* Handle variable replacement */
+			handleVariableReplacement(arg[0]);
+
+			/* Handle comments */
+
 
 			/* Check for built-in commands */
 			if (_strcmp(args[0], "exit") == 0)

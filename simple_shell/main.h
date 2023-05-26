@@ -72,4 +72,18 @@ char *_strdup(char *str);
 
 int _putenv(char *string);
 
+char *_strstr(const char *haystack, const char *needle);
+
+char *_memcpy(char *dest, char *src, unsigned int n);
+
+int startsWith(const char *str, const char *prefix);
+
+void intToString(int value, char *str, int size);
+
+void handleVariableReplacement(char *command);
+
+void *_memmove(void *dest, const void *src, size_t n);
+
+size_t _strcspn(const char *str, const char *reject);
+
 #endif /* MAIN_H */
